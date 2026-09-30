@@ -1,0 +1,21 @@
+{
+  "name": "Mission 1: The Time Audit",
+  "short_name": "TimeAudit",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0f1d",
+  "theme_color": "#0a0f1d",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://api.iconify.design/lucide:clock.svg?color=%233b82f6",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "https://api.iconify.design/lucide:clock.svg?color=%233b82f6",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
