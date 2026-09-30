@@ -4,428 +4,559 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Mission 1: The Time Audit & Daily Tracker</title>
-  <meta name="description" content="Daily Time Audit and Gym/Work tracking portal. Observe reality, track 24 hours, and receive daily email reports.">
-  <meta name="theme-color" content="#090d16">
+  <meta name="theme-color" content="#0b1120">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="TimeAudit">
   <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app-shell">
+  <div class="app-wrap">
 
-    <!-- Header -->
-    <header class="app-header">
-      <div class="header-top">
-        <div class="badge-mission">MISSION 1</div>
-        <div class="header-actions">
-          <button type="button" id="historyModalBtn" class="action-btn" title="Audit History">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span>History</span>
-          </button>
-          <button type="button" id="settingsModalBtn" class="action-btn" title="Email Settings">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-            <span id="headerEmailLabel">Email</span>
-          </button>
+    <!-- Top Sticky Header -->
+    <header class="top-nav">
+      <div class="top-nav-row">
+        <div class="brand-badge">
+          <span class="pulse-indicator"></span>
+          <span>MISSION 1</span>
         </div>
+        <div class="email-pill" id="targetEmailBadge" title="Recipient Email">
+          <span class="email-icon">📧</span>
+          <span id="displayEmail">suryavarma830@gmail.com</span>
+        </div>
+        <button type="button" id="historyModalBtn" class="nav-icon-btn" aria-label="Audit History">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </button>
       </div>
 
-      <div class="hero">
-        <h1 class="hero-title">The Time Audit</h1>
-        <p class="hero-quote">“Don’t manipulate the numbers. Observe reality.”</p>
+      <div class="title-strip">
+        <div>
+          <h1 class="main-title">The Time Audit</h1>
+          <p class="tagline">“Don’t manipulate the numbers. Observe reality.”</p>
+        </div>
+        <input type="date" id="auditDate" class="date-selector">
       </div>
 
-      <!-- Date & Quick Stats -->
-      <div class="meta-strip">
-        <div class="date-picker-wrap">
-          <input type="date" id="auditDate" class="date-field" required>
-        </div>
-        <div class="streak-pill">
-          <span class="pulse-dot"></span>
-          <span id="streakDisplay">Daily Log</span>
-        </div>
-      </div>
+      <!-- Segmented Navigation Tabs for easy mobile thumb navigation -->
+      <nav class="tab-bar">
+        <button type="button" class="tab-btn active" data-tab="tab-audit">
+          <span class="tab-emoji">⏱️</span>
+          <span>Time Audit</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tab-gym">
+          <span class="tab-emoji">🏋️</span>
+          <span>Gym Log</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tab-work">
+          <span class="tab-emoji">💼</span>
+          <span>Work & Reality</span>
+        </button>
+      </nav>
     </header>
 
-    <!-- Email Setup Notice (Dismissible/Configurable) -->
-    <div id="emailWarningBanner" class="alert-box" style="display: none;">
-      <div class="alert-info">
-        <strong>📧 Email Not Configured:</strong>
-        <span>Set your email address to receive this report every day.</span>
-      </div>
-      <button type="button" id="openSettingsQuickBtn" class="btn-alert">Configure</button>
-    </div>
+    <!-- Main Content Container with Tabs -->
+    <main class="content-scroll">
 
-    <!-- 24-Hour Reality Gauge -->
-    <section class="reality-gauge-card">
-      <div class="gauge-header">
-        <div class="gauge-title-wrap">
-          <span class="gauge-title">24-Hour Reality Gauge</span>
-          <span class="gauge-subtitle">All 9 categories must reflect your actual day</span>
-        </div>
-        <div class="gauge-total">
-          <span id="totalHoursCount" class="hours-num">0.0</span>
-          <span class="hours-label">/ 24 hrs</span>
-        </div>
-      </div>
+      <!-- ================= TAB 1: 9 TIME AUDIT CATEGORIES ================= -->
+      <div id="tab-audit" class="tab-pane active">
 
-      <!-- Progress Meter -->
-      <div class="meter-bar-track">
-        <div id="gaugeMeter" class="meter-bar-fill" style="width: 0%;"></div>
-      </div>
-      <div class="gauge-status-row">
-        <span id="gaugeStatusText" class="gauge-status">24.0 hours remaining to log</span>
-        <button type="button" id="balanceRandomBtn" class="btn-micro" title="Auto-fill the rest to Random/Unplanned">Balance remaining</button>
-      </div>
-    </section>
-
-    <!-- Main Audit Form -->
-    <form id="auditForm" class="audit-form">
-
-      <!-- SECTION 1: THE 9 TIME AUDIT CATEGORIES -->
-      <section class="card">
-        <div class="card-head">
-          <div class="section-icon">⏱️</div>
-          <div>
-            <h2 class="card-heading">The 9 Time Audit Categories</h2>
-            <p class="card-subheading">Roughly record hours spent in each category today.</p>
+        <!-- 24H Reality Meter Card -->
+        <div class="meter-card">
+          <div class="meter-header">
+            <div>
+              <span class="meter-title">24-Hour Reality Meter</span>
+              <span id="meterHelper" class="meter-helper">Adjust hours to balance 24.0h</span>
+            </div>
+            <div class="meter-count-box">
+              <span id="totalHoursDisplay" class="meter-big-num">0.0</span>
+              <span class="meter-unit">/ 24h</span>
+            </div>
+          </div>
+          <div class="progress-track">
+            <div id="meterBar" class="progress-bar" style="width: 0%;"></div>
+          </div>
+          <div class="meter-actions-row">
+            <span id="meterStatusMessage" class="meter-msg">Calculating...</span>
+            <button type="button" id="balanceToRandomBtn" class="balance-pill">
+              ⚡ Auto-Balance Remainder
+            </button>
           </div>
         </div>
 
-        <div class="audit-grid">
+        <p class="section-instruction">Tap any hour button to set instantly, or use + / - to fine tune:</p>
+
+        <!-- 9 Categories with Easy Tap Presets -->
+        <div class="cards-list">
 
           <!-- 1. Sleep -->
-          <div class="category-item" data-category="sleep">
-            <div class="cat-info">
-              <span class="cat-icon">🛌</span>
-              <div class="cat-meta">
-                <span class="cat-name">Sleep</span>
-                <span class="cat-hint">Night + naps</span>
+          <div class="tap-card" data-cat="sleep">
+            <div class="card-left">
+              <span class="card-icon">🛌</span>
+              <div class="card-titles">
+                <span class="card-name">Sleep</span>
+                <span class="card-desc">Night sleep + naps</span>
               </div>
             </div>
-            <div class="stepper">
-              <button type="button" class="step-btn minus" data-target="sleepHours">-</button>
-              <input type="number" step="0.25" min="0" max="24" id="sleepHours" name="sleepHours" class="cat-input" value="7.5">
-              <button type="button" class="step-btn plus" data-target="sleepHours">+</button>
+            <div class="card-right">
+              <div class="presets-row">
+                <button type="button" class="preset-chip" data-for="sleepHours" data-val="6">6h</button>
+                <button type="button" class="preset-chip" data-for="sleepHours" data-val="7">7h</button>
+                <button type="button" class="preset-chip active" data-for="sleepHours" data-val="7.5">7.5h</button>
+                <button type="button" class="preset-chip" data-for="sleepHours" data-val="8">8h</button>
+                <button type="button" class="preset-chip" data-for="sleepHours" data-val="8.5">8.5h</button>
+              </div>
+              <div class="stepper-box">
+                <button type="button" class="step-btn minus" data-target="sleepHours">−</button>
+                <input type="number" step="0.5" id="sleepHours" class="val-input" value="7.5" min="0" max="24">
+                <button type="button" class="step-btn plus" data-target="sleepHours">+</button>
+              </div>
             </div>
           </div>
 
           <!-- 2. Work -->
-          <div class="category-item highlight" data-category="work">
-            <div class="cat-info">
-              <span class="cat-icon">💼</span>
-              <div class="cat-meta">
-                <span class="cat-name">Work</span>
-                <span class="cat-hint">Deep + shallow work</span>
+          <div class="tap-card highlight-work" data-cat="work">
+            <div class="card-left">
+              <span class="card-icon">💼</span>
+              <div class="card-titles">
+                <span class="card-name">Work</span>
+                <span class="card-desc">Deep focus + meetings</span>
               </div>
             </div>
-            <div class="stepper">
-              <button type="button" class="step-btn minus" data-target="workHours">-</button>
-              <input type="number" step="0.25" min="0" max="24" id="workHours" name="workHours" class="cat-input" value="8.0">
-              <button type="button" class="step-btn plus" data-target="workHours">+</button>
+            <div class="card-right">
+              <div class="presets-row">
+                <button type="button" class="preset-chip" data-for="workHours" data-val="4">4h</button>
+                <button type="button" class="preset-chip" data-for="workHours" data-val="6">6h</button>
+                <button type="button" class="preset-chip active" data-for="workHours" data-val="8">8h</button>
+                <button type="button" class="preset-chip" data-for="workHours" data-val="9">9h</button>
+                <button type="button" class="preset-chip" data-for="workHours" data-val="10">10h</button>
+              </div>
+              <div class="stepper-box">
+                <button type="button" class="step-btn minus" data-target="workHours">−</button>
+                <input type="number" step="0.5" id="workHours" class="val-input" value="8.0" min="0" max="24">
+                <button type="button" class="step-btn plus" data-target="workHours">+</button>
+              </div>
             </div>
           </div>
 
           <!-- 3. Phone / Social Media -->
-          <div class="category-item alert-cat" data-category="phone">
-            <div class="cat-info">
-              <span class="cat-icon">📱</span>
-              <div class="cat-meta">
-                <span class="cat-name">Phone / Social Media</span>
-                <span class="cat-hint">Screen time & scrolling</span>
+          <div class="tap-card alert-phone" data-cat="phone">
+            <div class="card-left">
+              <span class="card-icon">📱</span>
+              <div class="card-titles">
+                <span class="card-name">Phone / Social Media</span>
+                <span class="card-desc">Screen time & scrolling</span>
               </div>
             </div>
-            <div class="stepper">
-              <button type="button" class="step-btn minus" data-target="phoneHours">-</button>
-              <input type="number" step="0.25" min="0" max="24" id="phoneHours" name="phoneHours" class="cat-input" value="2.0">
-              <button type="button" class="step-btn plus" data-target="phoneHours">+</button>
+            <div class="card-right">
+              <div class="presets-row">
+                <button type="button" class="preset-chip" data-for="phoneHours" data-val="1">1h</button>
+                <button type="button" class="preset-chip active" data-for="phoneHours" data-val="2">2h</button>
+                <button type="button" class="preset-chip" data-for="phoneHours" data-val="3">3h</button>
+                <button type="button" class="preset-chip" data-for="phoneHours" data-val="4">4h</button>
+                <button type="button" class="preset-chip" data-for="phoneHours" data-val="5">5h</button>
+              </div>
+              <div class="stepper-box">
+                <button type="button" class="step-btn minus" data-target="phoneHours">−</button>
+                <input type="number" step="0.5" id="phoneHours" class="val-input" value="2.0" min="0" max="24">
+                <button type="button" class="step-btn plus" data-target="phoneHours">+</button>
+              </div>
             </div>
           </div>
 
           <!-- 4. Food -->
-          <div class="category-item" data-category="food">
-            <div class="cat-info">
-              <span class="cat-icon">🥗</span>
-              <div class="cat-meta">
-                <span class="cat-name">Food</span>
-                <span class="cat-hint">Cooking, eating, prep</span>
+          <div class="tap-card" data-cat="food">
+            <div class="card-left">
+              <span class="card-icon">🥗</span>
+              <div class="card-titles">
+                <span class="card-name">Food</span>
+                <span class="card-desc">Cooking, eating, prep</span>
               </div>
             </div>
-            <div class="stepper">
-              <button type="button" class="step-btn minus" data-target="foodHours">-</button>
-              <input type="number" step="0.25" min="0" max="24" id="foodHours" name="foodHours" class="cat-input" value="1.5">
-              <button type="button" class="step-btn plus" data-target="foodHours">+</button>
+            <div class="card-right">
+              <div class="presets-row">
+                <button type="button" class="preset-chip" data-for="foodHours" data-val="0.5">0.5h</button>
+                <button type="button" class="preset-chip" data-for="foodHours" data-val="1">1h</button>
+                <button type="button" class="preset-chip active" data-for="foodHours" data-val="1.5">1.5h</button>
+                <button type="button" class="preset-chip" data-for="foodHours" data-val="2">2h</button>
+              </div>
+              <div class="stepper-box">
+                <button type="button" class="step-btn minus" data-target="foodHours">−</button>
+                <input type="number" step="0.5" id="foodHours" class="val-input" value="1.5" min="0" max="24">
+                <button type="button" class="step-btn plus" data-target="foodHours">+</button>
+              </div>
             </div>
           </div>
 
           <!-- 5. Family -->
-          <div class="category-item" data-category="family">
-            <div class="cat-info">
-              <span class="cat-icon">👨‍👩‍👧</span>
-              <div class="cat-meta">
-                <span class="cat-name">Family</span>
-                <span class="cat-hint">Quality & dedicated time</span>
+          <div class="tap-card" data-cat="family">
+            <div class="card-left">
+              <span class="card-icon">👨‍👩‍👧</span>
+              <div class="card-titles">
+                <span class="card-name">Family</span>
+                <span class="card-desc">Dedicated quality time</span>
               </div>
             </div>
-            <div class="stepper">
-              <button type="button" class="step-btn minus" data-target="familyHours">-</button>
-              <input type="number" step="0.25" min="0" max="24" id="familyHours" name="familyHours" class="cat-input" value="1.5">
-              <button type="button" class="step-btn plus" data-target="familyHours">+</button>
+            <div class="card-right">
+              <div class="presets-row">
+                <button type="button" class="preset-chip" data-for="familyHours" data-val="0.5">0.5h</button>
+                <button type="button" class="preset-chip" data-for="familyHours" data-val="1">1h</button>
+                <button type="button" class="preset-chip active" data-for="familyHours" data-val="1.5">1.5h</button>
+                <button type="button" class="preset-chip" data-for="familyHours" data-val="2">2h</button>
+                <button type="button" class="preset-chip" data-for="familyHours" data-val="3">3h</button>
+              </div>
+              <div class="stepper-box">
+                <button type="button" class="step-btn minus" data-target="familyHours">−</button>
+                <input type="number" step="0.5" id="familyHours" class="val-input" value="1.5" min="0" max="24">
+                <button type="button" class="step-btn plus" data-target="familyHours">+</button>
+              </div>
             </div>
           </div>
 
           <!-- 6. Learning -->
-          <div class="category-item" data-category="learning">
-            <div class="cat-info">
-              <span class="cat-icon">📚</span>
-              <div class="cat-meta">
-                <span class="cat-name">Learning</span>
-                <span class="cat-hint">Reading, courses, skills</span>
+          <div class="tap-card" data-cat="learning">
+            <div class="card-left">
+              <span class="card-icon">📚</span>
+              <div class="card-titles">
+                <span class="card-name">Learning</span>
+                <span class="card-desc">Reading, skills, courses</span>
               </div>
             </div>
-            <div class="stepper">
-              <button type="button" class="step-btn minus" data-target="learningHours">-</button>
-              <input type="number" step="0.25" min="0" max="24" id="learningHours" name="learningHours" class="cat-input" value="1.0">
-              <button type="button" class="step-btn plus" data-target="learningHours">+</button>
+            <div class="card-right">
+              <div class="presets-row">
+                <button type="button" class="preset-chip" data-for="learningHours" data-val="0">0h</button>
+                <button type="button" class="preset-chip" data-for="learningHours" data-val="0.5">0.5h</button>
+                <button type="button" class="preset-chip active" data-for="learningHours" data-val="1">1h</button>
+                <button type="button" class="preset-chip" data-for="learningHours" data-val="1.5">1.5h</button>
+                <button type="button" class="preset-chip" data-for="learningHours" data-val="2">2h</button>
+              </div>
+              <div class="stepper-box">
+                <button type="button" class="step-btn minus" data-target="learningHours">−</button>
+                <input type="number" step="0.5" id="learningHours" class="val-input" value="1.0" min="0" max="24">
+                <button type="button" class="step-btn plus" data-target="learningHours">+</button>
+              </div>
             </div>
           </div>
 
           <!-- 7. Exercise -->
-          <div class="category-item highlight" data-category="exercise">
-            <div class="cat-info">
-              <span class="cat-icon">🏋️</span>
-              <div class="cat-meta">
-                <span class="cat-name">Exercise</span>
-                <span class="cat-hint">Gym, workouts, walk</span>
+          <div class="tap-card highlight-exercise" data-cat="exercise">
+            <div class="card-left">
+              <span class="card-icon">🏋️</span>
+              <div class="card-titles">
+                <span class="card-name">Exercise</span>
+                <span class="card-desc">Gym, training, cardio</span>
               </div>
             </div>
-            <div class="stepper">
-              <button type="button" class="step-btn minus" data-target="exerciseHours">-</button>
-              <input type="number" step="0.25" min="0" max="24" id="exerciseHours" name="exerciseHours" class="cat-input" value="1.0">
-              <button type="button" class="step-btn plus" data-target="exerciseHours">+</button>
+            <div class="card-right">
+              <div class="presets-row">
+                <button type="button" class="preset-chip" data-for="exerciseHours" data-val="0">0h</button>
+                <button type="button" class="preset-chip" data-for="exerciseHours" data-val="0.5">0.5h</button>
+                <button type="button" class="preset-chip active" data-for="exerciseHours" data-val="1">1h</button>
+                <button type="button" class="preset-chip" data-for="exerciseHours" data-val="1.5">1.5h</button>
+                <button type="button" class="preset-chip" data-for="exerciseHours" data-val="2">2h</button>
+              </div>
+              <div class="stepper-box">
+                <button type="button" class="step-btn minus" data-target="exerciseHours">−</button>
+                <input type="number" step="0.5" id="exerciseHours" class="val-input" value="1.0" min="0" max="24">
+                <button type="button" class="step-btn plus" data-target="exerciseHours">+</button>
+              </div>
             </div>
           </div>
 
           <!-- 8. Entertainment -->
-          <div class="category-item" data-category="entertainment">
-            <div class="cat-info">
-              <span class="cat-icon">🎮</span>
-              <div class="cat-meta">
-                <span class="cat-name">Entertainment</span>
-                <span class="cat-hint">Movies, gaming, leisure</span>
+          <div class="tap-card" data-cat="entertainment">
+            <div class="card-left">
+              <span class="card-icon">🎮</span>
+              <div class="card-titles">
+                <span class="card-name">Entertainment</span>
+                <span class="card-desc">Movies, gaming, relaxation</span>
               </div>
             </div>
-            <div class="stepper">
-              <button type="button" class="step-btn minus" data-target="entertainmentHours">-</button>
-              <input type="number" step="0.25" min="0" max="24" id="entertainmentHours" name="entertainmentHours" class="cat-input" value="1.0">
-              <button type="button" class="step-btn plus" data-target="entertainmentHours">+</button>
+            <div class="card-right">
+              <div class="presets-row">
+                <button type="button" class="preset-chip" data-for="entertainmentHours" data-val="0">0h</button>
+                <button type="button" class="preset-chip" data-for="entertainmentHours" data-val="0.5">0.5h</button>
+                <button type="button" class="preset-chip active" data-for="entertainmentHours" data-val="1">1h</button>
+                <button type="button" class="preset-chip" data-for="entertainmentHours" data-val="1.5">1.5h</button>
+                <button type="button" class="preset-chip" data-for="entertainmentHours" data-val="2">2h</button>
+              </div>
+              <div class="stepper-box">
+                <button type="button" class="step-btn minus" data-target="entertainmentHours">−</button>
+                <input type="number" step="0.5" id="entertainmentHours" class="val-input" value="1.0" min="0" max="24">
+                <button type="button" class="step-btn plus" data-target="entertainmentHours">+</button>
+              </div>
             </div>
           </div>
 
           <!-- 9. Random / Unplanned Time -->
-          <div class="category-item" data-category="random">
-            <div class="cat-info">
-              <span class="cat-icon">⏳</span>
-              <div class="cat-meta">
-                <span class="cat-name">Random / Unplanned</span>
-                <span class="cat-hint">Commute, waiting, lost time</span>
+          <div class="tap-card highlight-random" data-cat="random">
+            <div class="card-left">
+              <span class="card-icon">⏳</span>
+              <div class="card-titles">
+                <span class="card-name">Random / Unplanned</span>
+                <span class="card-desc">Waiting, commuting, lost time</span>
               </div>
             </div>
-            <div class="stepper">
-              <button type="button" class="step-btn minus" data-target="randomHours">-</button>
-              <input type="number" step="0.25" min="0" max="24" id="randomHours" name="randomHours" class="cat-input" value="0.5">
-              <button type="button" class="step-btn plus" data-target="randomHours">+</button>
+            <div class="card-right">
+              <div class="presets-row">
+                <button type="button" class="preset-chip active" data-for="randomHours" data-val="0.5">0.5h</button>
+                <button type="button" class="preset-chip" data-for="randomHours" data-val="1">1h</button>
+                <button type="button" class="preset-chip" data-for="randomHours" data-val="1.5">1.5h</button>
+                <button type="button" class="preset-chip" data-for="randomHours" data-val="2">2h</button>
+              </div>
+              <div class="stepper-box">
+                <button type="button" class="step-btn minus" data-target="randomHours">−</button>
+                <input type="number" step="0.5" id="randomHours" class="val-input" value="0.5" min="0" max="24">
+                <button type="button" class="step-btn plus" data-target="randomHours">+</button>
+              </div>
             </div>
           </div>
 
         </div>
-      </section>
 
-      <!-- SECTION 2: GYM & WORK DAILY DEEP-DIVE -->
-      <section class="card">
-        <div class="card-head">
-          <div class="section-icon">🔥</div>
-          <div>
-            <h2 class="card-heading">Daily Gym & Work Details</h2>
-            <p class="card-subheading">Specific logs for your physical training and work achievements.</p>
-          </div>
+        <div class="tab-next-bar">
+          <button type="button" class="btn-next-tab" data-goto="tab-gym">
+            Next: Fill Gym Workout 🏋️ &rarr;
+          </button>
         </div>
 
-        <!-- Gym Specifics -->
-        <div class="sub-section gym-sub">
-          <div class="sub-head">
-            <span class="sub-badge gym-color">🏋️ GYM WORKOUT</span>
-          </div>
-
-          <div class="field-block">
-            <label class="field-label">Workout Split / Focus</label>
-            <div class="chips-container" id="workoutChips">
-              <button type="button" class="chip-item active" data-val="Push (Chest & Triceps)">Push</button>
-              <button type="button" class="chip-item" data-val="Pull (Back & Biceps)">Pull</button>
-              <button type="button" class="chip-item" data-val="Legs & Core">Legs</button>
-              <button type="button" class="chip-item" data-val="Shoulders & Arms">Shoulders</button>
-              <button type="button" class="chip-item" data-val="Cardio & HIIT">Cardio</button>
-              <button type="button" class="chip-item" data-val="Full Body">Full Body</button>
-              <button type="button" class="chip-item rest-chip" data-val="Rest Day">Rest Day 🛌</button>
-            </div>
-            <input type="hidden" id="workoutSplit" name="workoutSplit" value="Push (Chest & Triceps)">
-          </div>
-
-          <div class="field-block">
-            <label class="field-label" for="gymExercises">Exercises, Weights & Sets</label>
-            <textarea id="gymExercises" name="gymExercises" class="field-textarea" rows="3" placeholder="e.g.&#10;• Bench Press: 4 sets × 10 reps (80kg)&#10;• Incline Dumbbell Press: 3 sets × 12 reps (24kg)&#10;• Tricep Cable Extensions: 4 sets × 15 reps"></textarea>
-          </div>
-
-          <div class="field-row">
-            <div class="field-col">
-              <label class="field-label" for="gymIntensity">Intensity Rating</label>
-              <select id="gymIntensity" name="gymIntensity" class="field-select">
-                <option value="🔥 Beast Mode (10/10)">🔥 Beast Mode (10/10)</option>
-                <option value="💪 Strong & Solid (8/10)" selected>💪 Strong & Solid (8/10)</option>
-                <option value="🙂 Moderate (6/10)">🙂 Moderate (6/10)</option>
-                <option value="😴 Low Energy (4/10)">😴 Low Energy (4/10)</option>
-                <option value="🛌 Rest Day (N/A)">🛌 Rest Day (N/A)</option>
-              </select>
-            </div>
-            <div class="field-col">
-              <label class="field-label" for="waterIntake">Water Intake</label>
-              <input type="text" id="waterIntake" name="waterIntake" class="field-input" placeholder="e.g. 3.5 Liters" value="3 Liters">
-            </div>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- Work Specifics -->
-        <div class="sub-section work-sub">
-          <div class="sub-head">
-            <span class="sub-badge work-color">💼 WORK PROGRESS</span>
-          </div>
-
-          <div class="field-block">
-            <label class="field-label" for="workTasks">Key Deliverables & Tasks Completed <span class="req">*</span></label>
-            <textarea id="workTasks" name="workTasks" class="field-textarea" rows="3" required placeholder="e.g.&#10;• Finished backend API endpoint for billing&#10;• Led sprint planning meeting with dev team&#10;• Resolved 2 critical production bug tickets"></textarea>
-          </div>
-
-          <div class="field-block">
-            <label class="field-label" for="workWins">Major Wins / Highlights</label>
-            <input type="text" id="workWins" name="workWins" class="field-input" placeholder="e.g. Closed quarterly milestone on schedule">
-          </div>
-
-          <div class="field-block">
-            <label class="field-label" for="tomorrowPlan">Top 3 Priorities for Tomorrow</label>
-            <textarea id="tomorrowPlan" name="tomorrowPlan" class="field-textarea" rows="2" placeholder="1. Deploy release to staging&#10;2. Architecture review meeting&#10;3. Follow up on client deliverables"></textarea>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 3: OBSERVE REALITY (REFLECTION) -->
-      <section class="card reality-card">
-        <div class="card-head">
-          <div class="section-icon">👁️</div>
-          <div>
-            <h2 class="card-heading">Observe Reality</h2>
-            <p class="card-subheading">Unvarnished reflection: Where did your time honestly go?</p>
-          </div>
-        </div>
-
-        <div class="field-block">
-          <label class="field-label" for="realityObservation">Honest Observations & Reflection</label>
-          <textarea id="realityObservation" name="realityObservation" class="field-textarea" rows="3" placeholder="e.g. Spent 1 hour more on social media than expected during evening slump. Work was focused in morning. Sleep was solid."></textarea>
-        </div>
-      </section>
-
-      <!-- SUBMIT BUTTON -->
-      <div class="submit-tray">
-        <button type="submit" id="submitReportBtn" class="btn-submit">
-          <span class="btn-icon-spin" id="btnSpinner" style="display: none;"></span>
-          <span id="btnSubmitText">🚀 Send Daily Audit to My Mail</span>
-        </button>
-        <p class="tray-note">
-          Submits your 24h audit & sends a complete summary directly to your inbox.
-        </p>
       </div>
 
-    </form>
+      <!-- ================= TAB 2: GYM LOG ================= -->
+      <div id="tab-gym" class="tab-pane">
 
-    <!-- Footer -->
-    <footer class="app-footer">
-      <p>Mission 1 — The Time Audit &bull; Daily Accountability</p>
-    </footer>
+        <div class="pane-box">
+          <div class="pane-head">
+            <span class="pane-emoji">🏋️</span>
+            <div>
+              <h2 class="pane-title">Gym & Fitness Log</h2>
+              <p class="pane-desc">Tap your workout split, add exercises, and record intensity</p>
+            </div>
+          </div>
+
+          <!-- Workout Split Big Buttons -->
+          <div class="form-block">
+            <label class="form-label">Workout Split / Today's Focus</label>
+            <div class="grid-split-selector" id="workoutSplitGrid">
+              <button type="button" class="split-btn active" data-val="Push (Chest & Triceps)">
+                <span class="btn-top-emoji">💥</span>
+                <span class="btn-split-name">Push</span>
+                <span class="btn-split-sub">Chest / Triceps</span>
+              </button>
+              <button type="button" class="split-btn" data-val="Pull (Back & Biceps)">
+                <span class="btn-top-emoji">⚡</span>
+                <span class="btn-split-name">Pull</span>
+                <span class="btn-split-sub">Back / Biceps</span>
+              </button>
+              <button type="button" class="split-btn" data-val="Legs & Core">
+                <span class="btn-top-emoji">🦵</span>
+                <span class="btn-split-name">Legs</span>
+                <span class="btn-split-sub">Quads / Core</span>
+              </button>
+              <button type="button" class="split-btn" data-val="Shoulders & Arms">
+                <span class="btn-top-emoji">🎯</span>
+                <span class="btn-split-name">Shoulders</span>
+                <span class="btn-split-sub">Delts / Arms</span>
+              </button>
+              <button type="button" class="split-btn" data-val="Cardio & HIIT">
+                <span class="btn-top-emoji">🏃</span>
+                <span class="btn-split-name">Cardio</span>
+                <span class="btn-split-sub">HIIT / Run</span>
+              </button>
+              <button type="button" class="split-btn rest-btn" data-val="Rest Day">
+                <span class="btn-top-emoji">🛌</span>
+                <span class="btn-split-name">Rest Day</span>
+                <span class="btn-split-sub">Recovery</span>
+              </button>
+            </div>
+            <input type="hidden" id="workoutSplit" value="Push (Chest & Triceps)">
+          </div>
+
+          <!-- Quick Tap Exercise Chips (Appends to text box) -->
+          <div class="form-block">
+            <div class="label-with-hint">
+              <label class="form-label" for="gymExercises">Exercises, Weights & Sets</label>
+              <span class="tap-hint">Tap below to quick-add:</span>
+            </div>
+            <div class="quick-exercise-chips" id="quickExerciseChips">
+              <button type="button" class="quick-chip" data-exercise="Bench Press: 4 sets × 10 reps">+ Bench Press</button>
+              <button type="button" class="quick-chip" data-exercise="Incline Dumbbell Press: 3 sets × 12 reps">+ Incline DB</button>
+              <button type="button" class="quick-chip" data-exercise="Lat Pulldowns: 4 sets × 12 reps">+ Lat Pulldown</button>
+              <button type="button" class="quick-chip" data-exercise="Barbell Squats: 4 sets × 8 reps">+ Squats</button>
+              <button type="button" class="quick-chip" data-exercise="Deadlifts: 3 sets × 6 reps">+ Deadlift</button>
+              <button type="button" class="quick-chip" data-exercise="Overhead Shoulder Press: 4 sets × 10 reps">+ Shoulder Press</button>
+              <button type="button" class="quick-chip" data-exercise="Bicep Barbell Curls: 3 sets × 12 reps">+ Bicep Curls</button>
+              <button type="button" class="quick-chip" data-exercise="Tricep Cable Pushdowns: 4 sets × 15 reps">+ Tricep Pushdown</button>
+              <button type="button" class="quick-chip" data-exercise="Plank & Hanging Leg Raises">+ Core & Abs</button>
+            </div>
+            <textarea id="gymExercises" class="mobile-textarea" rows="4" placeholder="Type or tap quick exercises above..."></textarea>
+          </div>
+
+          <!-- Workout Intensity Tap Options -->
+          <div class="form-block">
+            <label class="form-label">Workout Intensity</label>
+            <div class="intensity-group" id="intensityGroup">
+              <button type="button" class="intensity-btn" data-val="🔥 Beast Mode (10/10)">🔥 Beast Mode</button>
+              <button type="button" class="intensity-btn active" data-val="💪 Strong (8/10)">💪 Strong</button>
+              <button type="button" class="intensity-btn" data-val="🙂 Moderate (6/10)">🙂 Moderate</button>
+              <button type="button" class="intensity-btn" data-val="😴 Low Energy (4/10)">😴 Low Energy</button>
+            </div>
+            <input type="hidden" id="gymIntensity" value="💪 Strong (8/10)">
+          </div>
+
+          <!-- Water Intake Quick Selector -->
+          <div class="form-block">
+            <label class="form-label">Water Intake Today</label>
+            <div class="water-presets" id="waterPresets">
+              <button type="button" class="water-chip" data-val="2.0 Liters">2.0L</button>
+              <button type="button" class="water-chip" data-val="2.5 Liters">2.5L</button>
+              <button type="button" class="water-chip active" data-val="3.0 Liters">3.0L</button>
+              <button type="button" class="water-chip" data-val="3.5 Liters">3.5L</button>
+              <button type="button" class="water-chip" data-val="4.0 Liters">4.0L</button>
+            </div>
+            <input type="hidden" id="waterIntake" value="3.0 Liters">
+          </div>
+
+        </div>
+
+        <div class="tab-next-bar">
+          <button type="button" class="btn-next-tab" data-goto="tab-work">
+            Next: Work Log & Reality 💼 &rarr;
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ================= TAB 3: WORK & REALITY ================= -->
+      <div id="tab-work" class="tab-pane">
+
+        <div class="pane-box">
+          <div class="pane-head">
+            <span class="pane-emoji">💼</span>
+            <div>
+              <h2 class="pane-title">Work & Productivity</h2>
+              <p class="pane-desc">Record deliverables, tomorrow's plan, and honest reality</p>
+            </div>
+          </div>
+
+          <!-- Productivity Vibe Selector -->
+          <div class="form-block">
+            <label class="form-label">Today's Focus & Productivity</label>
+            <div class="vibe-selector" id="productivityVibe">
+              <button type="button" class="vibe-btn active" data-val="⭐⭐⭐⭐⭐ 100% Locked In">
+                <span>🔥</span>
+                <span>Locked In</span>
+              </button>
+              <button type="button" class="vibe-btn" data-val="⭐⭐⭐⭐ Productive & Steady">
+                <span>⚡</span>
+                <span>Productive</span>
+              </button>
+              <button type="button" class="vibe-btn" data-val="⭐⭐⭐ Normal Progress">
+                <span>🙂</span>
+                <span>Normal</span>
+              </button>
+              <button type="button" class="vibe-btn" data-val="⭐⭐ Distracted / Slow">
+                <span>😴</span>
+                <span>Distracted</span>
+              </button>
+            </div>
+            <input type="hidden" id="productivityScore" value="⭐⭐⭐⭐⭐ 100% Locked In">
+          </div>
+
+          <!-- Key Work Completed -->
+          <div class="form-block">
+            <label class="form-label" for="workTasks">Key Deliverables & Tasks Completed <span class="req">*</span></label>
+            <textarea id="workTasks" class="mobile-textarea" rows="3" required placeholder="• Completed primary task...&#10;• Team sync & meetings...&#10;• Reviews & shipments..."></textarea>
+          </div>
+
+          <!-- Major Wins -->
+          <div class="form-block">
+            <label class="form-label" for="workWins">Major Wins / Highlights of the Day</label>
+            <input type="text" id="workWins" class="mobile-input" placeholder="e.g. Closed sprint target, solved tough problem">
+          </div>
+
+          <!-- Tomorrow Priorities -->
+          <div class="form-block">
+            <label class="form-label" for="tomorrowPlan">Top Priorities for Tomorrow</label>
+            <textarea id="tomorrowPlan" class="mobile-textarea" rows="2" placeholder="1. High priority focus...&#10;2. Key meeting or deliverable..."></textarea>
+          </div>
+
+          <!-- Observe Reality Reflection -->
+          <div class="reality-highlight-block">
+            <div class="reality-badge">👁️ OBSERVE REALITY</div>
+            <label class="form-label" for="realityObservation">Honest Reflection: Where did your time honestly go?</label>
+            <textarea id="realityObservation" class="mobile-textarea" rows="3" placeholder="Observe reality without excuses: Did phone time sneak up? Was workout focused? How did the 24 hours feel?"></textarea>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- STICKY BOTTOM BAR (Always visible for effortless submission on mobile) -->
+    <div class="sticky-footer">
+      <div class="sticky-info">
+        <span class="sticky-hours" id="stickyTotal">24.0h</span>
+        <span class="sticky-status" id="stickyStatus">Balanced ✨</span>
+      </div>
+      <button type="button" id="stickySubmitBtn" class="btn-big-submit">
+        <span class="spinner-dot" id="btnSpinner" style="display: none;"></span>
+        <span id="btnSubmitText">🚀 Send to suryavarma830@gmail.com</span>
+      </button>
+    </div>
 
   </div>
 
-  <!-- Settings Modal (Email Configuration) -->
-  <div id="settingsModal" class="modal-overlay" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-top">
-        <h3 class="modal-title">⚙️ Destination Email Settings</h3>
-        <button type="button" id="closeSettingsModal" class="btn-x">&times;</button>
+  <!-- Email Change / Settings Modal -->
+  <div id="settingsModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-sheet">
+      <div class="sheet-head">
+        <h3 class="sheet-title">⚙️ Destination Email</h3>
+        <button type="button" id="closeSettingsBtn" class="close-sheet-btn">&times;</button>
       </div>
-      <div class="modal-content">
-        <p class="modal-intro">
-          Enter the email address where your daily time audit, gym, and work report will be delivered.
-        </p>
-
-        <div class="modal-field">
-          <label class="modal-label" for="targetEmail">Your Email Address <span class="req">*</span></label>
-          <input type="email" id="targetEmail" class="field-input" placeholder="e.g. yourname@gmail.com">
-          <span class="field-caption">All daily logs will be emailed here.</span>
-        </div>
-
-        <div class="modal-field">
-          <label class="modal-label" for="web3FormsKey">
-            Web3Forms Access Key (Recommended for Direct Web Delivery)
-          </label>
-          <input type="text" id="web3FormsKey" class="field-input" placeholder="e.g. a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
-          <span class="field-caption">
-            Get a free key in 5 seconds at <a href="https://web3forms.com" target="_blank" rel="noopener">web3forms.com</a>. It delivers submissions directly to your inbox from any phone with no server needed.
-          </span>
-        </div>
-
-        <div class="modal-card-info">
-          <strong>💡 Instant Fallback:</strong> If no key is provided, the portal will format your report and open your default email app with one tap.
+      <div class="sheet-body">
+        <div class="form-block">
+          <label class="form-label" for="customEmailInput">Target Email Address</label>
+          <input type="email" id="customEmailInput" class="mobile-input" value="suryavarma830@gmail.com">
+          <span class="input-helper">Your daily time audit and gym/work report will be delivered here.</span>
         </div>
       </div>
-      <div class="modal-actions">
-        <button type="button" id="saveSettingsBtn" class="btn-save">Save Settings</button>
+      <div class="sheet-footer">
+        <button type="button" id="saveEmailBtn" class="sheet-btn-primary">Update Email</button>
       </div>
     </div>
   </div>
 
-  <!-- History Modal -->
-  <div id="historyModal" class="modal-overlay" style="display: none;">
-    <div class="modal-dialog modal-wide">
-      <div class="modal-top">
-        <h3 class="modal-title">📜 Past Time Audits</h3>
-        <button type="button" id="closeHistoryModal" class="btn-x">&times;</button>
+  <!-- Past Audits History Modal -->
+  <div id="historyModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-sheet modal-sheet-tall">
+      <div class="sheet-head">
+        <h3 class="sheet-title">📜 Past Audits History</h3>
+        <button type="button" id="closeHistoryBtn" class="close-sheet-btn">&times;</button>
       </div>
-      <div class="modal-content">
-        <div id="emptyHistoryMsg" class="empty-state" style="display: none;">
-          <span class="empty-icon">📝</span>
-          <p>No audits logged yet. Submit your first daily audit to start your record!</p>
+      <div class="sheet-body">
+        <div id="historyEmptyState" class="empty-box" style="display: none;">
+          <span>📝</span>
+          <p>No logged audits yet. Submit today's audit to start your record!</p>
         </div>
-        <div id="historyListContainer" class="history-stack"></div>
+        <div id="historyContainer" class="history-cards-wrap"></div>
       </div>
-      <div class="modal-actions space-between">
-        <button type="button" id="clearAllHistoryBtn" class="btn-danger-link">Clear All Logs</button>
-        <button type="button" id="closeHistoryBottomBtn" class="btn-secondary">Close</button>
+      <div class="sheet-footer split-footer">
+        <button type="button" id="clearAllHistory" class="sheet-btn-danger">Clear History</button>
+        <button type="button" id="closeHistoryBottom" class="sheet-btn-secondary">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- Toast Notification -->
-  <div id="appToast" class="toast-popup" role="status" aria-live="polite"></div>
+  <!-- Mobile Toast Message -->
+  <div id="mobileToast" class="toast-bar" role="status" aria-live="polite"></div>
 
   <script src="app.js"></script>
 </body>
