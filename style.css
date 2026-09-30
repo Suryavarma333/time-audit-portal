@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Mission 1: The Time Audit — Ultra Ergonomic Mobile UI
+   Mission 1: The Time Audit — Ultra Ergonomic Mobile UI + Modern Graphical Charts
    ========================================================================== */
 
 :root {
@@ -23,6 +23,7 @@
   --accent-rose: #f43f5e;
   --accent-amber: #f59e0b;
   --accent-purple: #a855f7;
+  --accent-indigo: #6366f1;
 
   --radius-xs: 6px;
   --radius-sm: 10px;
@@ -79,7 +80,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .brand-badge {
@@ -157,7 +158,7 @@ body {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .main-title {
@@ -170,10 +171,51 @@ body {
 }
 
 .tagline {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--accent-cyan);
   font-style: italic;
   font-weight: 500;
+}
+
+/* ================= DATE QUICK BAR ================= */
+.date-quick-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+}
+
+.quick-date-chips {
+  display: flex;
+  gap: 5px;
+}
+
+.q-date-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 9px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.q-date-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.q-date-btn.active {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: #fff;
+  box-shadow: 0 0 10px var(--accent-blue-glow);
 }
 
 .date-selector {
@@ -181,9 +223,9 @@ body {
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  padding: 6px 10px;
+  padding: 5px 8px;
   border-radius: var(--radius-sm);
   outline: none;
   cursor: pointer;
@@ -196,7 +238,7 @@ body {
 /* ================= TAB NAVIGATION ================= */
 .tab-bar {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   background: var(--bg-surface);
   padding: 4px;
   border-radius: var(--radius-md);
@@ -209,23 +251,29 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   background: transparent;
   border: none;
   color: var(--text-secondary);
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  padding: 8px 10px;
+  padding: 8px 6px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .tab-btn.active {
   background: var(--accent-blue);
   color: #ffffff;
   box-shadow: 0 2px 10px var(--accent-blue-glow);
+}
+
+.tab-btn.tab-highlight.active {
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  box-shadow: 0 2px 12px rgba(6, 182, 212, 0.4);
 }
 
 .tab-emoji {
@@ -803,6 +851,273 @@ body {
   color: #fff;
 }
 
+/* ================= TAB 4: MODERN GRAPHICAL CHARTS & STATUS ================= */
+.charts-view-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: linear-gradient(145deg, #101c34, #0b1424);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-lg);
+}
+
+.status-pill-sub {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--accent-cyan);
+}
+
+.charts-day-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.status-kpi-badge {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #6ee7b7;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+/* KPI Progress Meters Grid */
+.kpi-meters-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.meter-widget {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.meter-widget-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.widget-icon {
+  font-size: 1rem;
+}
+
+.widget-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.widget-metric {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.metric-val {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.metric-target {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  font-weight: 600;
+}
+
+.status-good {
+  color: var(--accent-emerald);
+}
+
+.mini-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.mini-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+.fill-indigo { background: #6366f1; }
+.fill-blue { background: #3b82f6; }
+.fill-rose { background: #f43f5e; }
+.fill-amber { background: #f59e0b; }
+
+/* Chart Cards */
+.chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-lg);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.chart-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.chart-sub {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+}
+
+.chart-tag {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--accent-cyan);
+}
+
+.chart-canvas-container {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  height: 280px;
+  margin: 0 auto 14px;
+}
+
+.bar-chart-container {
+  position: relative;
+  width: 100%;
+  height: 240px;
+}
+
+/* Category Legend Grid */
+.category-legend-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px;
+  border-radius: var(--radius-sm);
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-meta {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.legend-name {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.legend-val {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Day Recap Card */
+.day-recap-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-lg);
+}
+
+.recap-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.recap-icon {
+  font-size: 1.2rem;
+}
+
+.recap-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.recap-item {
+  margin-bottom: 10px;
+}
+
+.recap-item:last-child {
+  margin-bottom: 0;
+}
+
+.recap-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  margin-bottom: 2px;
+}
+
+.recap-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--accent-blue);
+}
+
 /* ================= STICKY BOTTOM SUBMISSION BAR ================= */
 .sticky-footer {
   position: fixed;
@@ -849,7 +1164,7 @@ body {
   color: #fff;
   padding: 14px 16px;
   border-radius: var(--radius-md);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   cursor: pointer;

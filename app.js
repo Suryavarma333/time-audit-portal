@@ -1,6 +1,6 @@
 /**
  * Mission 1: The Time Audit & Daily Tracker
- * Mobile Logic, Ergonomic Presets, and Direct Email Dispatch
+ * Mobile Logic, Chart.js Visuals, Date Reviewer, and Email Dispatch
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,6 +18,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const displayEmail = document.getElementById('displayEmail');
   const mobileToast = document.getElementById('mobileToast');
 
+  // Chart & Status Elements
+  const chartSelectedDateTitle = document.getElementById('chartSelectedDateTitle');
+  const chartStatusBadge = document.getElementById('chartStatusBadge');
+  const chartLegendGrid = document.getElementById('chartLegendGrid');
+  const recapGymText = document.getElementById('recapGymText');
+  const recapWorkText = document.getElementById('recapWorkText');
+  const recapRealityText = document.getElementById('recapRealityText');
+
+  // KPI Widget Elements
+  const widgetSleepVal = document.getElementById('widgetSleepVal');
+  const widgetSleepBar = document.getElementById('widgetSleepBar');
+  const widgetWorkVal = document.getElementById('widgetWorkVal');
+  const widgetWorkBar = document.getElementById('widgetWorkBar');
+  const widgetGymVal = document.getElementById('widgetGymVal');
+  const widgetGymBar = document.getElementById('widgetGymBar');
+  const widgetGymSub = document.getElementById('widgetGymSub');
+  const widgetPhoneVal = document.getElementById('widgetPhoneVal');
+  const widgetPhoneBar = document.getElementById('widgetPhoneBar');
+  const widgetPhoneSub = document.getElementById('widgetPhoneSub');
+
   // Modal Elements
   const targetEmailBadge = document.getElementById('targetEmailBadge');
   const settingsModal = document.getElementById('settingsModal');
@@ -33,18 +53,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const historyEmptyState = document.getElementById('historyEmptyState');
   const clearAllHistory = document.getElementById('clearAllHistory');
 
-  // Category Inputs
-  const categoryIds = [
-    'sleepHours',
-    'workHours',
-    'phoneHours',
-    'foodHours',
-    'familyHours',
-    'learningHours',
-    'exerciseHours',
-    'entertainmentHours',
-    'randomHours'
+  // Category Configuration
+  const categoryMeta = [
+    { id: 'sleepHours', name: 'Sleep', icon: '🛌', color: '#6366f1' },
+    { id: 'workHours', name: 'Work', icon: '💼', color: '#3b82f6' },
+    { id: 'phoneHours', name: 'Phone', icon: '📱', color: '#f43f5e' },
+    { id: 'foodHours', name: 'Food', icon: '🥗', color: '#10b981' },
+    { id: 'familyHours', name: 'Family', icon: '👨‍👩‍👧', color: '#ec4899' },
+    { id: 'learningHours', name: 'Learning', icon: '📚', color: '#8b5cf6' },
+    { id: 'exerciseHours', name: 'Exercise', icon: '🏋️', color: '#f59e0b' },
+    { id: 'entertainmentHours', name: 'Entertainment', icon: '🎮', color: '#06b6d4' },
+    { id: 'randomHours', name: 'Random', icon: '⏳', color: '#64748b' }
   ];
+
+  const categoryIds = categoryMeta.map(c => c.id);
 
   // Default Email Configuration
   const DEFAULT_EMAIL = 'suryavarma830@gmail.com';
@@ -61,11 +83,74 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   updateEmailDisplay();
 
-  // Set Today's Date
-  const todayStr = new Date().toISOString().split('T')[0];
-  if (auditDate) {
-    auditDate.value = todayStr;
+  // Date Helpers
+  function getTodayString() {
+    return new Date().toISOString().split('T')[0];
   }
+
+  function getYesterdayString() {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().split('T')[0];
+  }
+
+  function getLastSundayString() {
+    const d = new Date();
+    const day = d.getDay(); // 0 is Sunday
+    const diff = day === 0 ? 7 : day;
+    d.setDate(d.getDate() - diff);
+    return d.toISOString().split('T')[0];
+  }
+
+  function formatReadableDate(dateStr) {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const d = new Date(parts[0], parts[1] - 1, parts[2]);
+      return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    return dateStr;
+  }
+
+  // Set Default Date to Today
+  let currentDate = getTodayString();
+  if (auditDate) auditDate.value = currentDate;
+
+  // Initialize Sample Sunday Data if user hasn't logged it yet
+  function ensureSampleSundayData() {
+    const sundayDate = getLastSundayString();
+    const saved = JSON.parse(localStorage.getItem('timeAudit_history') || '[]');
+    const hasSunday = saved.some(item => item.date === sundayDate);
+
+    if (!hasSunday) {
+      const sampleSunday = {
+        id: Date.now() - 86400000 * 3,
+        date: sundayDate,
+        totalHours: 24.0,
+        categories: {
+          sleep: 8.5,
+          work: 3.5,
+          phone: 2.0,
+          food: 2.0,
+          family: 3.0,
+          learning: 1.5,
+          exercise: 1.5,
+          entertainment: 1.5,
+          random: 0.5
+        },
+        workoutSplit: 'Legs & Core',
+        gymExercises: '• Barbell Squats: 4 sets × 10 reps (90kg)\n• Romanian Deadlifts: 3 sets × 10 reps\n• Hanging Leg Raises: 4 sets × 15 reps',
+        gymIntensity: '🔥 Beast Mode (10/10)',
+        waterIntake: '3.5 Liters',
+        workTasks: '• Weekend review & sprint planning\n• Code refactor & system documentation',
+        workWins: 'Solid Sunday recovery and leg workout PR!',
+        tomorrowPlan: '1. Ship auth module\n2. Dev team sync at 10 AM',
+        realityReflection: 'Rest and family time balanced nicely. Stayed off mindless scrolling.'
+      };
+      saved.push(sampleSunday);
+      localStorage.setItem('timeAudit_history', JSON.stringify(saved));
+    }
+  }
+  ensureSampleSundayData();
 
   // ================= TAB NAVIGATION =================
   const tabButtons = document.querySelectorAll('.tab-btn');
@@ -78,6 +163,11 @@ document.addEventListener('DOMContentLoaded', () => {
     tabPanes.forEach(pane => {
       pane.classList.toggle('active', pane.id === tabId);
     });
+
+    if (tabId === 'tab-charts') {
+      refreshChartsView();
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -94,6 +184,101 @@ document.addEventListener('DOMContentLoaded', () => {
       switchTab(nextTab);
     });
   });
+
+  // ================= DATE SELECTOR & QUICK CHIPS =================
+  function loadDataForDate(dateStr) {
+    currentDate = dateStr;
+    if (auditDate) auditDate.value = dateStr;
+
+    // Check if entry exists in history
+    const saved = JSON.parse(localStorage.getItem('timeAudit_history') || '[]');
+    const record = saved.find(item => item.date === dateStr);
+
+    if (record) {
+      // Load recorded numbers
+      categoryMeta.forEach(cat => {
+        const input = document.getElementById(cat.id);
+        const val = record.categories[cat.id.replace('Hours', '')];
+        if (input && val !== undefined) {
+          input.value = val;
+          // sync preset chip
+          const card = input.closest('.tap-card');
+          if (card) {
+            card.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+            const match = card.querySelector(`.preset-chip[data-val="${val}"]`);
+            if (match) match.classList.add('active');
+          }
+        }
+      });
+
+      // Load Gym
+      if (record.workoutSplit) {
+        document.querySelectorAll('.split-btn').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-val') === record.workoutSplit);
+        });
+        const wsInput = document.getElementById('workoutSplit');
+        if (wsInput) wsInput.value = record.workoutSplit;
+      }
+      if (record.gymExercises && document.getElementById('gymExercises')) {
+        document.getElementById('gymExercises').value = record.gymExercises;
+      }
+      if (record.gymIntensity) {
+        document.querySelectorAll('.intensity-btn').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-val') === record.gymIntensity);
+        });
+      }
+      if (record.waterIntake) {
+        document.querySelectorAll('.water-chip').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-val') === record.waterIntake);
+        });
+      }
+
+      // Load Work
+      if (record.workTasks && document.getElementById('workTasks')) {
+        document.getElementById('workTasks').value = record.workTasks;
+      }
+      if (record.workWins && document.getElementById('workWins')) {
+        document.getElementById('workWins').value = record.workWins;
+      }
+      if (record.tomorrowPlan && document.getElementById('tomorrowPlan')) {
+        document.getElementById('tomorrowPlan').value = record.tomorrowPlan;
+      }
+      if (record.realityReflection && document.getElementById('realityObservation')) {
+        document.getElementById('realityObservation').value = record.realityReflection;
+      }
+
+      showToast(`Loaded records for ${formatReadableDate(dateStr)}`, 'info');
+    }
+
+    calculateTotal();
+    refreshChartsView();
+  }
+
+  // Quick Date Chips
+  document.querySelectorAll('.q-date-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.q-date-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const dateType = btn.getAttribute('data-date');
+      let targetDate = getTodayString();
+
+      if (dateType === 'yesterday') {
+        targetDate = getYesterdayString();
+      } else if (dateType === 'lastSunday') {
+        targetDate = getLastSundayString();
+      }
+
+      loadDataForDate(targetDate);
+    });
+  });
+
+  if (auditDate) {
+    auditDate.addEventListener('change', () => {
+      document.querySelectorAll('.q-date-btn').forEach(b => b.classList.remove('active'));
+      loadDataForDate(auditDate.value);
+    });
+  }
 
   // ================= TOTAL HOURS & REALITY GAUGE =================
   function calculateTotal() {
@@ -151,7 +336,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       input.value = val;
 
-      // Update active state among siblings
       const parentRow = chip.closest('.presets-row');
       if (parentRow) {
         parentRow.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
@@ -162,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Stepper + and -
   document.querySelectorAll('.step-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -181,7 +364,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       input.value = currentVal;
 
-      // Sync preset chip if matches
       const card = btn.closest('.tap-card');
       if (card) {
         const matchingChip = card.querySelector(`.preset-chip[data-val="${currentVal}"]`);
@@ -193,7 +375,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Manual input listener
   categoryIds.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -210,7 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Auto-Balance to Random/Unplanned Button
   if (balanceToRandomBtn) {
     balanceToRandomBtn.addEventListener('click', () => {
       let allocated = 0;
@@ -238,7 +418,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ================= GYM CONTROLS =================
-  // Split Selector
   const splitBtns = document.querySelectorAll('.split-btn');
   const workoutSplitInput = document.getElementById('workoutSplit');
   splitBtns.forEach(btn => {
@@ -251,7 +430,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Quick Exercise Chips
   const exerciseTextarea = document.getElementById('gymExercises');
   document.querySelectorAll('.quick-chip').forEach(chip => {
     chip.addEventListener('click', () => {
@@ -269,7 +447,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Intensity Group
   const intensityBtns = document.querySelectorAll('.intensity-btn');
   const gymIntensityInput = document.getElementById('gymIntensity');
   intensityBtns.forEach(btn => {
@@ -282,7 +459,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Water Presets
   const waterChips = document.querySelectorAll('.water-chip');
   const waterIntakeInput = document.getElementById('waterIntake');
   waterChips.forEach(chip => {
@@ -307,6 +483,193 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // ================= CHART.JS MODERN VISUALS =================
+  let pieChartInstance = null;
+  let barChartInstance = null;
+
+  function refreshChartsView() {
+    const selectedDate = auditDate ? auditDate.value : currentDate;
+    const formattedDate = formatReadableDate(selectedDate);
+    if (chartSelectedDateTitle) chartSelectedDateTitle.textContent = formattedDate;
+
+    // Collect current numbers from form
+    const hoursData = categoryMeta.map(cat => {
+      const el = document.getElementById(cat.id);
+      return parseFloat(el?.value) || 0;
+    });
+
+    const total = hoursData.reduce((a, b) => a + b, 0);
+    const roundedTotal = Math.round(total * 10) / 10;
+
+    // Update Status Badge
+    if (chartStatusBadge) {
+      if (Math.abs(roundedTotal - 24.0) < 0.05) {
+        chartStatusBadge.textContent = '✨ Balanced (24.0h)';
+        chartStatusBadge.style.color = '#6ee7b7';
+        chartStatusBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+      } else if (roundedTotal > 24.0) {
+        chartStatusBadge.textContent = `⚠️ Over by ${(roundedTotal - 24).toFixed(1)}h`;
+        chartStatusBadge.style.color = '#fda4af';
+        chartStatusBadge.style.background = 'rgba(244, 63, 94, 0.15)';
+      } else {
+        chartStatusBadge.textContent = `⏳ ${(24 - roundedTotal).toFixed(1)}h Remaining`;
+        chartStatusBadge.style.color = '#a5f3fc';
+        chartStatusBadge.style.background = 'rgba(6, 182, 212, 0.15)';
+      }
+    }
+
+    // Update KPI Progress Meters
+    const sleepH = parseFloat(document.getElementById('sleepHours')?.value) || 0;
+    const workH = parseFloat(document.getElementById('workHours')?.value) || 0;
+    const gymH = parseFloat(document.getElementById('exerciseHours')?.value) || 0;
+    const phoneH = parseFloat(document.getElementById('phoneHours')?.value) || 0;
+    const currentSplit = workoutSplitInput?.value || 'Workout';
+
+    if (widgetSleepVal) widgetSleepVal.textContent = `${sleepH}h`;
+    if (widgetSleepBar) widgetSleepBar.style.width = `${Math.min((sleepH / 8) * 100, 100)}%`;
+
+    if (widgetWorkVal) widgetWorkVal.textContent = `${workH}h`;
+    if (widgetWorkBar) widgetWorkBar.style.width = `${Math.min((workH / 8) * 100, 100)}%`;
+
+    if (widgetGymVal) widgetGymVal.textContent = `${gymH}h`;
+    if (widgetGymSub) widgetGymSub.textContent = currentSplit.split('(')[0].trim();
+    if (widgetGymBar) widgetGymBar.style.width = `${Math.min((gymH / 1.5) * 100, 100)}%`;
+
+    if (widgetPhoneVal) widgetPhoneVal.textContent = `${phoneH}h`;
+    if (widgetPhoneBar) widgetPhoneBar.style.width = `${Math.min((phoneH / 4) * 100, 100)}%`;
+    if (widgetPhoneSub) {
+      if (phoneH <= 2.0) {
+        widgetPhoneSub.textContent = 'Controlled 🛡️';
+        widgetPhoneSub.className = 'metric-target status-good';
+      } else if (phoneH <= 3.5) {
+        widgetPhoneSub.textContent = 'Moderate ⚠️';
+        widgetPhoneSub.className = 'metric-target';
+      } else {
+        widgetPhoneSub.textContent = 'High Alert 🔥';
+        widgetPhoneSub.className = 'metric-target status-over';
+      }
+    }
+
+    // Update Recap Notes
+    const gymNotes = document.getElementById('gymExercises')?.value.trim();
+    const workNotes = document.getElementById('workTasks')?.value.trim();
+    const realityNotes = document.getElementById('realityObservation')?.value.trim();
+
+    if (recapGymText) recapGymText.textContent = gymNotes || 'Push/Legs routine logged. Good workout intensity.';
+    if (recapWorkText) recapWorkText.textContent = workNotes || 'Core deliverables and daily milestones logged.';
+    if (recapRealityText) recapRealityText.textContent = realityNotes || 'Observed reality cleanly without manipulation.';
+
+    // Populate Legend Grid
+    if (chartLegendGrid) {
+      chartLegendGrid.innerHTML = categoryMeta.map((cat, idx) => {
+        const val = hoursData[idx];
+        const pct = roundedTotal > 0 ? Math.round((val / roundedTotal) * 100) : 0;
+        return `
+          <div class="legend-item">
+            <span class="legend-dot" style="background: ${cat.color};"></span>
+            <div class="legend-meta">
+              <span class="legend-name">${cat.icon} ${cat.name}</span>
+              <span class="legend-val">${val}h (${pct}%)</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render / Update Chart.js Pie / Donut Chart
+    const pieCanvas = document.getElementById('pieChartCanvas');
+    if (pieCanvas && window.Chart) {
+      if (pieChartInstance) {
+        pieChartInstance.destroy();
+      }
+
+      pieChartInstance = new Chart(pieCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: categoryMeta.map(c => `${c.icon} ${c.name}`),
+          datasets: [{
+            data: hoursData,
+            backgroundColor: categoryMeta.map(c => c.color),
+            borderColor: '#0f172a',
+            borderWidth: 2,
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '62%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#0f172a',
+              titleFont: { family: 'Plus Jakarta Sans', size: 13, weight: 'bold' },
+              bodyFont: { family: 'JetBrains Mono', size: 12 },
+              padding: 10,
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              callbacks: {
+                label: (ctx) => {
+                  const val = ctx.raw || 0;
+                  const pct = roundedTotal > 0 ? Math.round((val / roundedTotal) * 100) : 0;
+                  return ` ${val} hrs (${pct}% of day)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Render / Update Chart.js Bar Chart
+    const barCanvas = document.getElementById('barChartCanvas');
+    if (barCanvas && window.Chart) {
+      if (barChartInstance) {
+        barChartInstance.destroy();
+      }
+
+      barChartInstance = new Chart(barCanvas, {
+        type: 'bar',
+        data: {
+          labels: categoryMeta.map(c => c.name),
+          datasets: [{
+            label: 'Hours Spent',
+            data: hoursData,
+            backgroundColor: categoryMeta.map(c => c.color),
+            borderRadius: 6,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 12,
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 11 } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#0f172a',
+              padding: 10,
+              callbacks: {
+                label: (ctx) => ` ${ctx.raw} hours`
+              }
+            }
+          }
+        }
+      });
+    }
+  }
 
   // ================= SETTINGS MODAL =================
   if (targetEmailBadge) targetEmailBadge.addEventListener('click', () => settingsModal.style.display = 'flex');
@@ -339,9 +702,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (historyEmptyState) historyEmptyState.style.display = 'none';
     if (historyContainer) {
       historyContainer.innerHTML = logs.map(entry => `
-        <div class="h-card">
+        <div class="h-card" style="cursor: pointer;" onclick="window.selectDateFromHistory('${entry.date}')">
           <div class="h-header">
-            <span>📅 ${entry.date}</span>
+            <span>📅 ${formatReadableDate(entry.date)}</span>
             <span>${entry.totalHours} hrs</span>
           </div>
           <div class="h-pills">
@@ -357,6 +720,12 @@ document.addEventListener('DOMContentLoaded', () => {
       `).join('');
     }
   }
+
+  window.selectDateFromHistory = (dateStr) => {
+    loadDataForDate(dateStr);
+    historyModal.style.display = 'none';
+    switchTab('tab-charts');
+  };
 
   function escapeHtml(text) {
     return text.replace(/[&<>"']/g, m => ({
@@ -402,7 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (stickySubmitBtn) {
     stickySubmitBtn.addEventListener('click', async () => {
       const email = localStorage.getItem('timeAudit_email') || DEFAULT_EMAIL;
-      const date = auditDate?.value || todayStr;
+      const date = auditDate?.value || currentDate;
       const totalHours = calculateTotal();
 
       const workTasks = document.getElementById('workTasks')?.value.trim();
@@ -434,7 +803,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const tomorrowPlan = document.getElementById('tomorrowPlan')?.value.trim() || 'None logged';
       const realityReflection = document.getElementById('realityObservation')?.value.trim() || 'Observed reality cleanly.';
 
-      // Save to local history
+      // Save to local history (update existing if same date, or add new)
       const entry = {
         id: Date.now(),
         date,
@@ -442,20 +811,26 @@ document.addEventListener('DOMContentLoaded', () => {
         categories,
         workoutSplit,
         gymExercises,
+        gymIntensity,
+        waterIntake,
         workTasks,
+        workWins,
+        tomorrowPlan,
         realityReflection
       };
 
-      const savedList = JSON.parse(localStorage.getItem('timeAudit_history') || '[]');
+      let savedList = JSON.parse(localStorage.getItem('timeAudit_history') || '[]');
+      savedList = savedList.filter(item => item.date !== date);
       savedList.unshift(entry);
       if (savedList.length > 60) savedList.pop();
       localStorage.setItem('timeAudit_history', JSON.stringify(savedList));
 
       // Construct Formatted Email Body
-      const emailSubject = `Mission 1 Time Audit & Daily Report — ${date} [${totalHours}h / 24h]`;
+      const readableDate = formatReadableDate(date);
+      const emailSubject = `Mission 1 Time Audit & Daily Report — ${readableDate} [${totalHours}h / 24h]`;
       const emailBody = `
 =========================================
-MISSION 1 — THE TIME AUDIT (${date})
+MISSION 1 — THE TIME AUDIT (${readableDate})
 "Don't manipulate the numbers. Observe reality."
 =========================================
 
@@ -497,13 +872,11 @@ Delivered to: ${email}
 From: Daily Pulse Time Audit Web Portal
       `.trim();
 
-      // UI Loading state
       btnSpinner.style.display = 'inline-block';
       btnSubmitText.textContent = 'Sending...';
       stickySubmitBtn.disabled = true;
 
       try {
-        // Attempt sending via FormSubmit API directly to the user's email
         const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(email)}`, {
           method: 'POST',
           headers: {
@@ -512,7 +885,7 @@ From: Daily Pulse Time Audit Web Portal
           },
           body: JSON.stringify({
             _subject: emailSubject,
-            Date: date,
+            Date: readableDate,
             TotalHours: `${totalHours} / 24.0 hrs`,
             Sleep_Hours: categories.sleep,
             Work_Hours: categories.work,
@@ -537,8 +910,8 @@ From: Daily Pulse Time Audit Web Portal
 
         if (response.ok) {
           showToast('✅ Daily Audit sent to your mail and saved!', 'success');
+          switchTab('tab-charts');
         } else {
-          // Instant direct mailto fallback
           fallbackMailto(email, emailSubject, emailBody);
           showToast('Saved locally & opening in your email app!', 'success');
         }
