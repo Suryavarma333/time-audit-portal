@@ -1,6 +1,6 @@
 /**
  * Mission 1: The Time Audit & Daily Tracker
- * Mobile Logic, Chart.js Visuals, Date Reviewer, and Email Dispatch
+ * Mobile Logic, Chart.js Visuals, Date Reviewer, and Self-to-Self Gmail Dispatch
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -43,7 +43,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const settingsModal = document.getElementById('settingsModal');
   const closeSettingsBtn = document.getElementById('closeSettingsBtn');
   const customEmailInput = document.getElementById('customEmailInput');
+  const webhookUrlInput = document.getElementById('webhookUrlInput');
   const saveEmailBtn = document.getElementById('saveEmailBtn');
+
+  // Dispatch Modal Elements
+  const dispatchSuccessModal = document.getElementById('dispatchSuccessModal');
+  const closeDispatchBtn = document.getElementById('closeDispatchBtn');
+  const closeDispatchBottomBtn = document.getElementById('closeDispatchBottomBtn');
+  const openInGmailDirectBtn = document.getElementById('openInGmailDirectBtn');
+  const copyAuditReportBtn = document.getElementById('copyAuditReportBtn');
 
   const historyModal = document.getElementById('historyModal');
   const historyModalBtn = document.getElementById('historyModalBtn');
@@ -79,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     userEmail = localStorage.getItem('timeAudit_email') || DEFAULT_EMAIL;
     if (displayEmail) displayEmail.textContent = userEmail;
     if (customEmailInput) customEmailInput.value = userEmail;
+    if (webhookUrlInput) webhookUrlInput.value = localStorage.getItem('timeAudit_webhook') || '';
     if (btnSubmitText) btnSubmitText.textContent = `🚀 Send to ${userEmail.split('@')[0]}`;
   }
   updateEmailDisplay();
@@ -111,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return dateStr;
   }
 
-  // Set Default Date to Today
   let currentDate = getTodayString();
   if (auditDate) auditDate.value = currentDate;
 
@@ -190,18 +198,15 @@ document.addEventListener('DOMContentLoaded', () => {
     currentDate = dateStr;
     if (auditDate) auditDate.value = dateStr;
 
-    // Check if entry exists in history
     const saved = JSON.parse(localStorage.getItem('timeAudit_history') || '[]');
     const record = saved.find(item => item.date === dateStr);
 
     if (record) {
-      // Load recorded numbers
       categoryMeta.forEach(cat => {
         const input = document.getElementById(cat.id);
         const val = record.categories[cat.id.replace('Hours', '')];
         if (input && val !== undefined) {
           input.value = val;
-          // sync preset chip
           const card = input.closest('.tap-card');
           if (card) {
             card.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
@@ -211,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // Load Gym
       if (record.workoutSplit) {
         document.querySelectorAll('.split-btn').forEach(b => {
           b.classList.toggle('active', b.getAttribute('data-val') === record.workoutSplit);
@@ -233,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // Load Work
       if (record.workTasks && document.getElementById('workTasks')) {
         document.getElementById('workTasks').value = record.workTasks;
       }
@@ -254,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshChartsView();
   }
 
-  // Quick Date Chips
   document.querySelectorAll('.q-date-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.q-date-btn').forEach(b => b.classList.remove('active'));
@@ -493,7 +495,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const formattedDate = formatReadableDate(selectedDate);
     if (chartSelectedDateTitle) chartSelectedDateTitle.textContent = formattedDate;
 
-    // Collect current numbers from form
     const hoursData = categoryMeta.map(cat => {
       const el = document.getElementById(cat.id);
       return parseFloat(el?.value) || 0;
@@ -502,7 +503,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const total = hoursData.reduce((a, b) => a + b, 0);
     const roundedTotal = Math.round(total * 10) / 10;
 
-    // Update Status Badge
     if (chartStatusBadge) {
       if (Math.abs(roundedTotal - 24.0) < 0.05) {
         chartStatusBadge.textContent = '✨ Balanced (24.0h)';
@@ -519,7 +519,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Update KPI Progress Meters
     const sleepH = parseFloat(document.getElementById('sleepHours')?.value) || 0;
     const workH = parseFloat(document.getElementById('workHours')?.value) || 0;
     const gymH = parseFloat(document.getElementById('exerciseHours')?.value) || 0;
@@ -551,7 +550,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Update Recap Notes
     const gymNotes = document.getElementById('gymExercises')?.value.trim();
     const workNotes = document.getElementById('workTasks')?.value.trim();
     const realityNotes = document.getElementById('realityObservation')?.value.trim();
@@ -560,7 +558,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (recapWorkText) recapWorkText.textContent = workNotes || 'Core deliverables and daily milestones logged.';
     if (recapRealityText) recapRealityText.textContent = realityNotes || 'Observed reality cleanly without manipulation.';
 
-    // Populate Legend Grid
     if (chartLegendGrid) {
       chartLegendGrid.innerHTML = categoryMeta.map((cat, idx) => {
         const val = hoursData[idx];
@@ -577,7 +574,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }).join('');
     }
 
-    // Render / Update Chart.js Pie / Donut Chart
     const pieCanvas = document.getElementById('pieChartCanvas');
     if (pieCanvas && window.Chart) {
       if (pieChartInstance) {
@@ -622,7 +618,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Render / Update Chart.js Bar Chart
     const barCanvas = document.getElementById('barChartCanvas');
     if (barCanvas && window.Chart) {
       if (barChartInstance) {
@@ -677,13 +672,32 @@ document.addEventListener('DOMContentLoaded', () => {
   if (saveEmailBtn) {
     saveEmailBtn.addEventListener('click', () => {
       const val = customEmailInput.value.trim();
+      const webhook = webhookUrlInput.value.trim();
       if (val && val.includes('@')) {
         localStorage.setItem('timeAudit_email', val);
+        localStorage.setItem('timeAudit_webhook', webhook);
         updateEmailDisplay();
         settingsModal.style.display = 'none';
-        showToast('Email address updated!', 'success');
+        showToast('Settings saved!', 'success');
       } else {
         alert('Please enter a valid email address.');
+      }
+    });
+  }
+
+  // ================= DISPATCH SUCCESS MODAL =================
+  if (closeDispatchBtn) closeDispatchBtn.addEventListener('click', () => dispatchSuccessModal.style.display = 'none');
+  if (closeDispatchBottomBtn) closeDispatchBottomBtn.addEventListener('click', () => dispatchSuccessModal.style.display = 'none');
+
+  let lastGeneratedReportText = '';
+  if (copyAuditReportBtn) {
+    copyAuditReportBtn.addEventListener('click', () => {
+      if (lastGeneratedReportText) {
+        navigator.clipboard.writeText(lastGeneratedReportText).then(() => {
+          showToast('✅ Full report copied to clipboard!', 'success');
+        }).catch(() => {
+          showToast('Copy failed, please copy manually', 'error');
+        });
       }
     });
   }
@@ -767,7 +781,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3800);
   }
 
-  // ================= SUBMISSION & EMAIL DISPATCH =================
+  // ================= SUBMISSION & SELF-TO-SELF GMAIL DISPATCH =================
   if (stickySubmitBtn) {
     stickySubmitBtn.addEventListener('click', async () => {
       const email = localStorage.getItem('timeAudit_email') || DEFAULT_EMAIL;
@@ -803,7 +817,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const tomorrowPlan = document.getElementById('tomorrowPlan')?.value.trim() || 'None logged';
       const realityReflection = document.getElementById('realityObservation')?.value.trim() || 'Observed reality cleanly.';
 
-      // Save to local history (update existing if same date, or add new)
+      // Save to local history
       const entry = {
         id: Date.now(),
         date,
@@ -872,64 +886,57 @@ Delivered to: ${email}
 From: Daily Pulse Time Audit Web Portal
       `.trim();
 
-      btnSpinner.style.display = 'inline-block';
-      btnSubmitText.textContent = 'Sending...';
-      stickySubmitBtn.disabled = true;
+      lastGeneratedReportText = emailBody;
 
-      try {
-        const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(email)}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            _subject: emailSubject,
-            Date: readableDate,
-            TotalHours: `${totalHours} / 24.0 hrs`,
-            Sleep_Hours: categories.sleep,
-            Work_Hours: categories.work,
-            Phone_Hours: categories.phone,
-            Food_Hours: categories.food,
-            Family_Hours: categories.family,
-            Learning_Hours: categories.learning,
-            Exercise_Hours: categories.exercise,
-            Entertainment_Hours: categories.entertainment,
-            Random_Unplanned_Hours: categories.random,
-            Gym_Split: workoutSplit,
-            Gym_Intensity: gymIntensity,
-            Water_Intake: waterIntake,
-            Gym_Exercises: gymExercises,
-            Work_Completed: workTasks,
-            Work_Wins: workWins,
-            Tomorrow_Priorities: tomorrowPlan,
-            Observe_Reality_Reflection: realityReflection,
-            _template: 'table'
-          })
-        });
-
-        if (response.ok) {
-          showToast('✅ Daily Audit sent to your mail and saved!', 'success');
-          switchTab('tab-charts');
-        } else {
-          fallbackMailto(email, emailSubject, emailBody);
-          showToast('Saved locally & opening in your email app!', 'success');
-        }
-      } catch (err) {
-        console.warn('API submission fallback:', err);
-        fallbackMailto(email, emailSubject, emailBody);
-        showToast('Saved locally & opening in your email app!', 'success');
-      } finally {
-        btnSpinner.style.display = 'none';
-        btnSubmitText.textContent = `🚀 Send to ${email.split('@')[0]}`;
-        stickySubmitBtn.disabled = false;
+      // Construct Direct Self-to-Self Gmail Web Compose URL
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+      if (openInGmailDirectBtn) {
+        openInGmailDirectBtn.href = gmailUrl;
       }
-    });
-  }
 
-  function fallbackMailto(email, subject, body) {
-    const mailto = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
+      // Check if custom background webhook configured
+      const customWebhook = localStorage.getItem('timeAudit_webhook');
+      if (customWebhook) {
+        btnSpinner.style.display = 'inline-block';
+        btnSubmitText.textContent = 'Sending to Webhook...';
+        try {
+          await fetch(customWebhook, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to: email,
+              subject: emailSubject,
+              body: emailBody,
+              data: entry
+            })
+          });
+          showToast('Sent to webhook & saved!', 'success');
+        } catch (e) {
+          console.warn('Webhook dispatch error:', e);
+        } finally {
+          btnSpinner.style.display = 'none';
+          btnSubmitText.textContent = `🚀 Send to ${email.split('@')[0]}`;
+        }
+      }
+
+      // Open Direct Gmail in new tab/app immediately OR show Dispatch Modal
+      try {
+        const win = window.open(gmailUrl, '_blank');
+        if (win) {
+          showToast('Opening Gmail to send to yourself...', 'success');
+        } else {
+          // If popup blocked, show the dispatch modal
+          dispatchSuccessModal.style.display = 'flex';
+        }
+      } catch (e) {
+        dispatchSuccessModal.style.display = 'flex';
+      }
+
+      // Also display dispatch modal so user has 1-tap copy / retry option
+      dispatchSuccessModal.style.display = 'flex';
+      refreshChartsView();
+    });
   }
 
   // Initial Calculation

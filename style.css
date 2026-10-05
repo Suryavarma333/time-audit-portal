@@ -1307,6 +1307,103 @@ body {
   cursor: pointer;
 }
 
+/* ================= DISPATCH SUCCESS HERO MODAL ================= */
+.dispatch-hero-box {
+  text-align: center;
+  padding: 10px 10px 18px;
+}
+
+.dispatch-icon {
+  font-size: 2.5rem;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.dispatch-hero-box h4 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.dispatch-hero-box p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.dispatch-hero-box strong {
+  color: #93c5fd;
+}
+
+.dispatch-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.dispatch-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dispatch-btn.btn-gmail {
+  background: linear-gradient(135deg, rgba(234, 67, 53, 0.15), rgba(59, 130, 246, 0.15));
+  border-color: rgba(234, 67, 53, 0.4);
+}
+
+.dispatch-btn.btn-gmail:hover, .dispatch-btn.btn-gmail:active {
+  background: linear-gradient(135deg, rgba(234, 67, 53, 0.25), rgba(59, 130, 246, 0.25));
+  border-color: #ea4335;
+}
+
+.dispatch-btn.btn-copy {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+  width: 100%;
+  text-align: left;
+}
+
+.dispatch-btn.btn-copy:hover, .dispatch-btn.btn-copy:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dispatch-btn-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.dispatch-btn-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dispatch-btn-meta strong {
+  font-size: 0.92rem;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.dispatch-btn-meta span {
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+}
+
+.dispatch-arrow {
+  font-size: 1.2rem;
+  color: var(--accent-cyan);
+  font-weight: 800;
+}
+
 /* History Cards */
 .history-cards-wrap {
   display: flex;
